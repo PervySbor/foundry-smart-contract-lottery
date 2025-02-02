@@ -5,7 +5,6 @@ pragma solidity 0.8.19;
  *  @notice This contract automaticaly selects chainlink VRF's address
  * for current chain
  */
-
 import {Script} from "lib/forge-std/src/Script.sol";
 import {console} from "forge-std/Test.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
@@ -13,13 +12,13 @@ import {LinkToken} from "test/mocks/LinkToken.sol";
 
 abstract contract CodeConstants {
     uint256 internal constant ETH_MAINNET_CHAIN_ID = 1;
-    address internal constant ETH_MAINNET_LINK_ADDRESS =
-        0x514910771AF9Ca656af840dff83E8264EcF986CA;
+    address internal constant ETH_MAINNET_LINK_ADDRESS = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
     uint256 internal constant ETH_SEPOLIA_CHAIN_ID = 11155111;
-    address internal constant ETH_SEPOLIA_LINK_ADDRESS =
-        0x779877A7B0D9E8603169DdbD7836e478b4624789;
-    /** @dev The LINK provided by the Polygon Bridge is not ERC-677 compatible,
-     *  @dev so you cannot use it with Chainlink services or oracle nodes. */
+    address internal constant ETH_SEPOLIA_LINK_ADDRESS = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
+    /**
+     * @dev The LINK provided by the Polygon Bridge is not ERC-677 compatible,
+     *  @dev so you cannot use it with Chainlink services or oracle nodes.
+     */
     //uint256 internal constant BNB_CHAIN_ID = 56;
     //address internal constant BNB_CHAIN_LINK_ADDRESS =
     uint256 internal constant ANVIL_CHAIN_ID = 31337;
@@ -50,7 +49,9 @@ contract HelperConfig is CodeConstants, Script {
         address account;
     }
 
-    /** @dev keyHashes allow max gas fee = 500 Gwei */
+    /**
+     * @dev keyHashes allow max gas fee = 500 Gwei
+     */
     constructor() {
         s_NetworkConfigByChainId[ETH_MAINNET_CHAIN_ID] = getEthMainnetConfig();
         s_NetworkConfigByChainId[ETH_SEPOLIA_CHAIN_ID] = getEthSepoliaConfig();
@@ -61,11 +62,11 @@ contract HelperConfig is CodeConstants, Script {
     NetworkConfig s_VRFConfig;
     mapping(uint256 chainId => NetworkConfig) private s_NetworkConfigByChainId;
 
-    /** Getters */
+    /**
+     * Getters
+     */
     function getActiveNetworkConfig() external returns (NetworkConfig memory) {
-        if (
-            s_NetworkConfigByChainId[block.chainid].vrfCoordinator != address(0)
-        ) {
+        if (s_NetworkConfigByChainId[block.chainid].vrfCoordinator != address(0)) {
             return s_NetworkConfigByChainId[block.chainid];
         } else if (block.chainid == ANVIL_CHAIN_ID) {
             s_NetworkConfigByChainId[ANVIL_CHAIN_ID] = getOrCreateAnvilConfig();
@@ -76,35 +77,35 @@ contract HelperConfig is CodeConstants, Script {
     }
 
     function getEthMainnetConfig() private pure returns (NetworkConfig memory) {
-        return
-            NetworkConfig(
-                ENTRANCE_FEE,
-                INTERVAL,
-                0xD7f86b4b8Cae7D942340FF628F82735b7a20893a,
-                0x3fd2fec10d06ee8f65e7f2e95f5c56511359ece3f33960ad8a866ae24a8ff10b,
-                SUBSCRIPTION_ID,
-                CALLBACK_GAS_LIMIT,
-                ETH_MAINNET_LINK_ADDRESS,
-                address(0)
-            );
+        return NetworkConfig(
+            ENTRANCE_FEE,
+            INTERVAL,
+            0xD7f86b4b8Cae7D942340FF628F82735b7a20893a,
+            0x3fd2fec10d06ee8f65e7f2e95f5c56511359ece3f33960ad8a866ae24a8ff10b,
+            SUBSCRIPTION_ID,
+            CALLBACK_GAS_LIMIT,
+            ETH_MAINNET_LINK_ADDRESS,
+            address(0)
+        );
     }
 
     function getEthSepoliaConfig() private pure returns (NetworkConfig memory) {
-        return
-            NetworkConfig(
-                ENTRANCE_FEE,
-                INTERVAL,
-                0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
-                0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
-                SUBSCRIPTION_ID,
-                CALLBACK_GAS_LIMIT,
-                ETH_SEPOLIA_LINK_ADDRESS,
-                0xa9FC12FE48989444F5f921a53eF9d270daA9c4Db
-            );
+        return NetworkConfig(
+            ENTRANCE_FEE,
+            INTERVAL,
+            0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
+            0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
+            SUBSCRIPTION_ID,
+            CALLBACK_GAS_LIMIT,
+            ETH_SEPOLIA_LINK_ADDRESS,
+            0xa9FC12FE48989444F5f921a53eF9d270daA9c4Db
+        );
     }
 
-    /** @dev The LINK provided by the Polygon Bridge is not ERC-677 compatible,
-     *  @dev so you cannot use it with Chainlink services or oracle nodes. */
+    /**
+     * @dev The LINK provided by the Polygon Bridge is not ERC-677 compatible,
+     *  @dev so you cannot use it with Chainlink services or oracle nodes.
+     */
     /*function getBNBConfig() private pure returns (NetworkConfig memory) {
         return
             NetworkConfig(
@@ -123,37 +124,22 @@ contract HelperConfig is CodeConstants, Script {
         }
         vm.startBroadcast();
         LinkToken linkTokenMock = new LinkToken();
-        VRFCoordinatorV2_5Mock vrfCoordinatorMock = new VRFCoordinatorV2_5Mock(
-            MOCK_BASE_FEE,
-            MOCK_GAS_PRICE_LINK,
-            MOCK_WEI_PER_UNIT_LINK
-        );
+        VRFCoordinatorV2_5Mock vrfCoordinatorMock =
+            new VRFCoordinatorV2_5Mock(MOCK_BASE_FEE, MOCK_GAS_PRICE_LINK, MOCK_WEI_PER_UNIT_LINK);
         vm.stopBroadcast();
-        console.logString(
-            "===================HelperConfig=================== "
+        console.logString("===================HelperConfig=================== ");
+        console.log("Deployed LinkTokenMock to address: %s", address(linkTokenMock));
+        console.log("Deployed VRFCoordinatorMock to address: %s", address(vrfCoordinatorMock));
+        console.log("Minted this amt of LINK: %s", linkTokenMock.getBalance(msg.sender));
+        return NetworkConfig(
+            MOCK_BASE_FEE,
+            INTERVAL,
+            address(vrfCoordinatorMock),
+            bytes32(0),
+            SUBSCRIPTION_ID,
+            CALLBACK_GAS_LIMIT,
+            address(linkTokenMock),
+            0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
         );
-        console.log(
-            "Deployed LinkTokenMock to address: %s",
-            address(linkTokenMock)
-        );
-        console.log(
-            "Deployed VRFCoordinatorMock to address: %s",
-            address(vrfCoordinatorMock)
-        );
-        console.log(
-            "Minted this amt of LINK: %s",
-            linkTokenMock.getBalance(msg.sender)
-        );
-        return
-            NetworkConfig(
-                MOCK_BASE_FEE,
-                INTERVAL,
-                address(vrfCoordinatorMock),
-                bytes32(0),
-                SUBSCRIPTION_ID,
-                CALLBACK_GAS_LIMIT,
-                address(linkTokenMock),
-                0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
-            );
     }
 }

@@ -26,24 +26,14 @@ contract DeployRaffle is Script {
         FundSubscription fundSubscriptionContract = new FundSubscription();
         AddConsumer addConsumerContract = new AddConsumer();
 
-        HelperConfig.NetworkConfig memory config = helperConfig
-            .getActiveNetworkConfig();
+        HelperConfig.NetworkConfig memory config = helperConfig.getActiveNetworkConfig();
 
         if (config.subscriptionId == 0) {
-            (
-                config.subscriptionId,
-                config.vrfCoordinator
-            ) = subscriptionContract.createSubscription(
-                config.vrfCoordinator,
-                config.account
-            );
+            (config.subscriptionId, config.vrfCoordinator) =
+                subscriptionContract.createSubscription(config.vrfCoordinator, config.account);
 
             fundSubscriptionContract.fundSubscription(
-                config.vrfCoordinator,
-                config.subscriptionId,
-                config.linkAddr,
-                LINK_FUND_AMOUNT,
-                config.account
+                config.vrfCoordinator, config.subscriptionId, config.linkAddr, LINK_FUND_AMOUNT, config.account
             );
         }
 
@@ -57,12 +47,7 @@ contract DeployRaffle is Script {
             config.callbackGasLimit
         );
         vm.stopBroadcast();
-        addConsumerContract.addConsumer(
-            address(raffle),
-            config.vrfCoordinator,
-            config.subscriptionId,
-            config.account
-        );
+        addConsumerContract.addConsumer(address(raffle), config.vrfCoordinator, config.subscriptionId, config.account);
         return (raffle, helperConfig);
     }
 }

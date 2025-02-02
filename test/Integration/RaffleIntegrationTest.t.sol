@@ -32,19 +32,9 @@ contract RaffleIntegrationTest is Test, CodeConstants {
         console.log("sender: %s", msg.sender);
         console.log("sender's balances before transfer:");
         console.log("ETH: %s", msg.sender.balance);
-        console.log(
-            "LINK: %s",
-            LinkTokenInterface(linkAddress).balanceOf(msg.sender)
-        );
+        console.log("LINK: %s", LinkTokenInterface(linkAddress).balanceOf(msg.sender));
 
-        (uint256 subscriptionId, address vrfCoordinator) = createSubscription
-            .createSubscriptionUsingConfig();
-        fundSubscription.fundSubscription(
-            vrfCoordinator,
-            subscriptionId,
-            linkAddress,
-            FUND_AMOUNT,
-            account
-        );
+        (uint256 subscriptionId, address vrfCoordinator) = createSubscription.createSubscriptionUsingConfig();
+        fundSubscription.fundSubscription(vrfCoordinator, subscriptionId, linkAddress, FUND_AMOUNT, account);
     }
 }

@@ -13,7 +13,8 @@
 ## Quick start
 
 ```
-git clone https://github.com/PervySbor/fondry-smart-contract-lottery
+git clone https://github.com/PervySbor/foundry-smart-contract-lottery
+cd foundry-smart-contract-lottery
 make install
 make deploy
 ```

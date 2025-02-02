@@ -2,10 +2,7 @@
 pragma solidity 0.8.19;
 
 interface LinkTokenInterface {
-    function allowance(
-        address owner,
-        address spender
-    ) external view returns (uint256);
+    function allowance(address owner, address spender) external view returns (uint256);
 
     function approve(address spender, uint256 value) external returns (bool);
 
@@ -13,15 +10,9 @@ interface LinkTokenInterface {
 
     function decimals() external view returns (uint8);
 
-    function decreaseApproval(
-        address spender,
-        uint256 addedValue
-    ) external returns (bool);
+    function decreaseApproval(address spender, uint256 addedValue) external returns (bool);
 
-    function increaseApproval(
-        address spender,
-        uint256 subtractedValue
-    ) external;
+    function increaseApproval(address spender, uint256 subtractedValue) external;
 
     function name() external view returns (string memory);
 
@@ -31,15 +22,7 @@ interface LinkTokenInterface {
 
     function transfer(address to, uint256 value) external returns (bool);
 
-    function transferAndCall(
-        address to,
-        uint256 value,
-        bytes memory data
-    ) external returns (bool);
+    function transferAndCall(address to, uint256 value, bytes memory data) external returns (bool);
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 value
-    ) external returns (bool);
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
 }

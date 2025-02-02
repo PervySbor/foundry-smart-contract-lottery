@@ -11,29 +11,21 @@ import {LinkToken} from "test/mocks/LinkToken.sol";
 import {DevOpsTools} from "lib/foundry-devops/src/DevOpsTools.sol";
 
 contract CreateSubscription is Script {
-    function createSubscriptionUsingConfig()
-        public
-        returns (uint256 subId, address)
-    {
+    function createSubscriptionUsingConfig() public returns (uint256 subId, address) {
         HelperConfig helperConfig = new HelperConfig();
-        address vrfCoordinator = helperConfig
-            .getActiveNetworkConfig()
-            .vrfCoordinator;
+        address vrfCoordinator = helperConfig.getActiveNetworkConfig().vrfCoordinator;
         address account = helperConfig.getActiveNetworkConfig().account;
         return createSubscription(vrfCoordinator, account);
     }
 
-    function createSubscription(
-        address vrfCoordinator,
-        address account
-    ) public returns (uint256 subId, address) {
-        console.logString(
-            "===================CreateSubscription=================== "
-        );
+    function createSubscription(address vrfCoordinator, address account) public returns (uint256 subId, address) {
+        console.logString("===================CreateSubscription=================== ");
         console.log("Creating subscription on chain id: %s", block.chainid);
 
         vm.startBroadcast(account);
-        /** @dev using mock as an interface here, so it works both in Anvil and real chains */
+        /**
+         * @dev using mock as an interface here, so it works both in Anvil and real chains
+         */
         subId = VRFCoordinatorV2_5Mock(vrfCoordinator).createSubscription();
         vm.stopBroadcast();
 
@@ -52,15 +44,8 @@ contract FundSubscription is Script, CodeConstants {
 
     function fundSubscriptionUsingConfig() public {
         HelperConfig helperConfig = new HelperConfig();
-        HelperConfig.NetworkConfig memory config = helperConfig
-            .getActiveNetworkConfig();
-        fundSubscription(
-            config.vrfCoordinator,
-            config.subscriptionId,
-            config.linkAddr,
-            FUND_AMOUNT,
-            config.account
-        );
+        HelperConfig.NetworkConfig memory config = helperConfig.getActiveNetworkConfig();
+        fundSubscription(config.vrfCoordinator, config.subscriptionId, config.linkAddr, FUND_AMOUNT, config.account);
     }
 
     function fundSubscription(
@@ -70,9 +55,7 @@ contract FundSubscription is Script, CodeConstants {
         uint256 amount,
         address account
     ) public {
-        console.logString(
-            "===================FundSubscription===================== "
-        );
+        console.logString("===================FundSubscription===================== ");
         console.log("Link token contract address: %s", linkToken);
         console.log("Funding subscription on chain id: %s", block.chainid);
         console.log("Using vrfCoordinator: %s", vrfCoordinator);
@@ -82,11 +65,10 @@ contract FundSubscription is Script, CodeConstants {
 
         if (block.chainid == ANVIL_CHAIN_ID) {
             vm.startBroadcast();
-            /** @dev if local => funding with ETH */
-            VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(
-                subscriptionId,
-                amount
-            );
+            /**
+             * @dev if local => funding with ETH
+             */
+            VRFCoordinatorV2_5Mock(vrfCoordinator).fundSubscription(subscriptionId, amount);
             vm.stopBroadcast();
         } else {
             console.log(LinkToken(linkToken).balanceOf(msg.sender));
@@ -97,27 +79,17 @@ contract FundSubscription is Script, CodeConstants {
             console.log("sender: %s", msg.sender);
             console.log("sender's balances before transfer:");
             console.log("ETH: %s", msg.sender.balance);
-            console.log(
-                "LINK: %s",
-                LinkTokenInterface(linkToken).balanceOf(msg.sender)
-            );
+            console.log("LINK: %s", LinkTokenInterface(linkToken).balanceOf(msg.sender));
 
             vm.startBroadcast(account);
-            LinkTokenInterface(linkToken).transferAndCall(
-                vrfCoordinator,
-                FUND_AMOUNT,
-                abi.encode(subscriptionId)
-            );
+            LinkTokenInterface(linkToken).transferAndCall(vrfCoordinator, FUND_AMOUNT, abi.encode(subscriptionId));
             vm.stopBroadcast();
 
             console.log("==================================================");
             console.log("sender: %s", msg.sender);
             console.log("sender's balances after transfer:");
             console.log("ETH: %s", msg.sender.balance);
-            console.log(
-                "LINK: %s",
-                LinkTokenInterface(linkToken).balanceOf(msg.sender)
-            );
+            console.log("LINK: %s", LinkTokenInterface(linkToken).balanceOf(msg.sender));
         }
     }
 
@@ -130,39 +102,27 @@ contract AddConsumer is Script {
     function addConsumerUsingConfig(address contractToAddToVrf) public {
         HelperConfig helperConfig = new HelperConfig();
         uint256 subId = helperConfig.getActiveNetworkConfig().subscriptionId;
-        address vrfCoordinator = helperConfig
-            .getActiveNetworkConfig()
-            .vrfCoordinator;
+        address vrfCoordinator = helperConfig.getActiveNetworkConfig().vrfCoordinator;
         address account = helperConfig.getActiveNetworkConfig().account;
         addConsumer(contractToAddToVrf, vrfCoordinator, subId, account);
     }
 
-    function addConsumer(
-        address contractToAddToVrf,
-        address vrfCoordinator,
-        uint256 subId,
-        address account
-    ) public {
+    function addConsumer(address contractToAddToVrf, address vrfCoordinator, uint256 subId, address account) public {
         console.log("===================AddConsumer======================== ");
-        console.log(
-            "Adding consumer contract: %s to VRF coordinator",
-            contractToAddToVrf
-        );
+        console.log("Adding consumer contract: %s to VRF coordinator", contractToAddToVrf);
         console.log("Using vrfCoordinator: %s", vrfCoordinator);
         console.log("Using subscriptionId: %s", subId);
         console.log("On chain: %s", block.chainid);
         vm.startBroadcast(account);
-        /** @dev using mock as an interface here, so it works both in Anvil and real chains */
-        VRFCoordinatorV2_5Mock(vrfCoordinator).addConsumer(
-            subId,
-            contractToAddToVrf
-        );
+        /**
+         * @dev using mock as an interface here, so it works both in Anvil and real chains
+         */
+        VRFCoordinatorV2_5Mock(vrfCoordinator).addConsumer(subId, contractToAddToVrf);
         vm.stopBroadcast();
     }
 
     function run() external {
-        address mostRecentlyDeployedRaffle = DevOpsTools
-            .get_most_recent_deployment("Raffle", block.chainid);
+        address mostRecentlyDeployedRaffle = DevOpsTools.get_most_recent_deployment("Raffle", block.chainid);
         addConsumerUsingConfig(mostRecentlyDeployedRaffle);
     }
 }
